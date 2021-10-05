@@ -35,7 +35,9 @@ def __get_closing_price(some_date):
 
 def get_price_diff(some_date, some_other_date):
   return float(__get_closing_price(some_date)) - float(__get_closing_price(some_other_date))
-print(get_price_diff(yesterday, day_before_yesterday))
+
+price_difference_pct = (get_price_diff(yesterday, day_before_yesterday)) / float(__get_closing_price(yesterday)) * 100
+print(price_difference_pct)
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

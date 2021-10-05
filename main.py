@@ -1,6 +1,7 @@
 from dotenv import dotenv_values
 import requests
 from datetime import date, timedelta
+from twilio.rest import Client
 
 CRYPTO_CURRENCY = "ETH"
 CRYPTO_CURRENCY_NAME = "Ethereum"
@@ -64,15 +65,27 @@ def show_news(q):
   articles = data["articles"]
 
   title_content = [f"{article['title']} \n {article['content']}" for article in articles[:ARTICLES_NUMBER]]
-  print(title_content)
-
-if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
-  show_news(querystring_news["q"])
-else:
-   print("Negligible difference")
+  return title_content
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
+def send_message():
+  account_sid=config["TWILIO_ACCOUNT_SID"]
+  auth_token=config["TWILIO_AUTH_TOKEN"]
+  client = Client(account_sid, auth_token)
+
+  message = client.messages \
+                  .create(
+                      body=f"{show_news(querystring_news['q'])}",
+                      from_=config["from_"],
+                      to=config["to"]
+                  )
+  print(message.status)
+
+if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
+  send_message()
+else:
+   print("Negligible difference")
 
 
 #Optional: Format the SMS message like this: 

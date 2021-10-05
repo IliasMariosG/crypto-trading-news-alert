@@ -4,6 +4,7 @@ from datetime import date, timedelta
 
 CRYPTO_CURRENCY = "ETH"
 CRYPTO_CURRENCY_NAME = "Ethereum"
+THRESHOLD = 5
 config = dotenv_values(".env")
 
 ## STEP 1: Use https://www.alphavantage.co
@@ -40,7 +41,11 @@ def get_pct_diff(initial, final):
   return (__get_price_diff(initial, final)) / float(__get_closing_price(initial)) * 100
 
 price_difference_pct = get_pct_diff(yesterday, day_before_yesterday)
-print(f"{price_difference_pct} %")
+
+if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
+  print("Read news")
+else:
+  print("Difference not of interest")
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

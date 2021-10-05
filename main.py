@@ -1,5 +1,6 @@
 from dotenv import dotenv_values
 import requests
+from datetime import date, timedelta
 
 CRYPTO_CURRENCY = "ETH"
 CRYPTO_CURRENCY_NAME = "Ethereum"
@@ -18,7 +19,13 @@ response = requests.get(url=url, headers=headers, params=querystring)
 response.raise_for_status()
 data = response.json()
 
-info_yesterday = data["Time Series (Digital Currency Daily)"]["2021-10-04"]
+today = date.today()
+time_interval = timedelta(days=1)
+yesterday = today - time_interval
+
+yesterday_string = yesterday.strftime("%Y-%m-%d")
+info_yesterday = data["Time Series (Digital Currency Daily)"][yesterday_string]
+price_yesterday = info_yesterday["4a. close (USD)"]
 
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 

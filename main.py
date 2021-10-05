@@ -30,12 +30,12 @@ def __date_to_string(datetime_object):
 def __get_info(some_date):
   return data["Time Series (Digital Currency Daily)"][__date_to_string(some_date)]
 
-def get_closing_price(some_date):
+def __get_closing_price(some_date):
   return __get_info(some_date)["4a. close (USD)"]
 
-closing_price_yesterday = get_closing_price(yesterday)
-closing_price_day_before_yesterday = get_closing_price(day_before_yesterday)
-price_difference = float(closing_price_yesterday) - float(closing_price_day_before_yesterday)
+def get_price_diff(some_date, some_other_date):
+  return float(__get_closing_price(some_date)) - float(__get_closing_price(some_other_date))
+print(get_price_diff(yesterday, day_before_yesterday))
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

@@ -24,13 +24,14 @@ time_interval = timedelta(days=1)
 yesterday = today - time_interval
 day_before_yesterday = yesterday - time_interval
 
-yesterday_string = yesterday.strftime("%Y-%m-%d")
-day_before_yesterday_string = day_before_yesterday.strftime("%Y-%m-%d")
-info_yesterday = data["Time Series (Digital Currency Daily)"][yesterday_string]
+info_yesterday = data["Time Series (Digital Currency Daily)"][__date_to_string(yesterday)]
 price_yesterday = info_yesterday["4a. close (USD)"]
 
-info_day_before_yesterday = data["Time Series (Digital Currency Daily)"][day_before_yesterday_string]
+info_day_before_yesterday = data["Time Series (Digital Currency Daily)"][__date_to_string(day_before_yesterday)]
 price_day_before_yesterday = info_day_before_yesterday["4a. close (USD)"]
+
+def __date_to_string(datetime_object):
+  return datetime_object.strftime("%Y-%m-%d")
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

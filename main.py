@@ -12,15 +12,16 @@ config = dotenv_values(".env")
 # When STOCK price increase/decreases by N% between yesterday and the day before yesterday then print("Get News").
 # N: int
 
-url = "https://alpha-vantage.p.rapidapi.com/query"
+url_alpha_vantage = "https://alpha-vantage.p.rapidapi.com/query"
 querystring = {"function":"DIGITAL_CURRENCY_DAILY","symbol":CRYPTO_CURRENCY, "market":"USD"}
 headers = {
     'x-rapidapi-host': "alpha-vantage.p.rapidapi.com",
     'x-rapidapi-key': config['X_RAPIDAPI_KEY']
     }
-response = requests.get(url=url, headers=headers, params=querystring)
-response.raise_for_status()
-data = response.json()
+def get_request(url, params, **kwargs):
+  response = requests.get(url=url_alpha_vantage, params=querystring, headers=headers)
+  response.raise_for_status()
+  return response.json()
 
 today = date.today()
 time_interval = timedelta(days=1)
@@ -31,6 +32,7 @@ def __date_to_string(datetime_object):
   return datetime_object.strftime("%Y-%m-%d")
 
 def __get_info(some_date):
+  data = get_request(url=url_alpha_vantage, params=querystring)
   return data["Time Series (Digital Currency Daily)"][__date_to_string(some_date)]
 
 def __get_closing_price(some_date):
@@ -57,33 +59,33 @@ querystring_news = {
 
 ARTICLES_NUMBER = 3
 
-def show_news(q):  
+def get_news(q):  
   response = requests.get(url=news_url, params=querystring_news)
   response.raise_for_status()
-
   data = response.json()
-  articles = data["articles"]
+  return data
 
+def format_message(data):
+  articles = data["articles"]
   title_content = [f"{article['title']} \n {article['content']}" for article in articles[:ARTICLES_NUMBER]]
   return title_content
-
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
-def send_message():
+def send_message(title_content):
   account_sid=config["TWILIO_ACCOUNT_SID"]
   auth_token=config["TWILIO_AUTH_TOKEN"]
   client = Client(account_sid, auth_token)
 
   message = client.messages \
                   .create(
-                      body=f"{show_news(querystring_news['q'])}",
+                      body=f"{title_content}",
                       from_=config["from_"],
                       to=config["to"]
                   )
   print(message.status)
 
 if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
-  send_message()
+  send_message(format_message(get_news(CRYPTO_CURRENCY_NAME.lower())))
 else:
    print("Negligible difference")
 

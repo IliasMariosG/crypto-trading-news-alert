@@ -18,6 +18,8 @@ response = requests.get(url=url, headers=headers, params=querystring)
 response.raise_for_status()
 data = response.json()
 
+info_yesterday = data["Time Series (Digital Currency Daily)"]["2021-10-04"]
+
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

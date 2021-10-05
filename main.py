@@ -22,11 +22,15 @@ data = response.json()
 today = date.today()
 time_interval = timedelta(days=1)
 yesterday = today - time_interval
+day_before_yesterday = yesterday - time_interval
 
 yesterday_string = yesterday.strftime("%Y-%m-%d")
+day_before_yesterday_string = day_before_yesterday.strftime("%Y-%m-%d")
 info_yesterday = data["Time Series (Digital Currency Daily)"][yesterday_string]
 price_yesterday = info_yesterday["4a. close (USD)"]
 
+info_day_before_yesterday = data["Time Series (Digital Currency Daily)"][day_before_yesterday_string]
+price_day_before_yesterday = info_day_before_yesterday["4a. close (USD)"]
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

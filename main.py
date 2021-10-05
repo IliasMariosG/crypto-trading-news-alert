@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 CRYPTO_CURRENCY = "ETH"
 CRYPTO_CURRENCY_NAME = "Ethereum"
-THRESHOLD = 5
+THRESHOLD = 0.5
 config = dotenv_values(".env")
 
 ## STEP 1: Use https://www.alphavantage.co
@@ -43,10 +43,26 @@ def get_pct_diff(initial, final):
 price_difference_pct = get_pct_diff(yesterday, day_before_yesterday)
 
 if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
-  print("Read news")
+  news_url = "https://newsapi.org/v2/everything"
+  querystring_news = {
+    "q": CRYPTO_CURRENCY_NAME.lower(),
+    "apiKey": config["NEWS_API_KEY"]
+
+  }
+  response = requests.get(url=news_url, params=querystring_news)
+  response.raise_for_status()
+
+  data = response.json()
+  articles = data["articles"]
+
+  articles_number = 3
+  for i in range(articles_number):
+    print(articles[i]["title"])
+    print("\n")
+    print(articles[i]["content"])
 else:
-  print("Difference not of interest")
-## STEP 2: Use https://newsapi.org
+   print("Negligible difference")
+# STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 
 ## STEP 3: Use https://www.twilio.com

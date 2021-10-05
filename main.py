@@ -33,11 +33,14 @@ def __get_info(some_date):
 def __get_closing_price(some_date):
   return __get_info(some_date)["4a. close (USD)"]
 
-def get_price_diff(some_date, some_other_date):
+def __get_price_diff(some_date, some_other_date):
   return float(__get_closing_price(some_date)) - float(__get_closing_price(some_other_date))
 
-price_difference_pct = (get_price_diff(yesterday, day_before_yesterday)) / float(__get_closing_price(yesterday)) * 100
-print(price_difference_pct)
+def get_pct_diff(initial, final):
+  return (__get_price_diff(initial, final)) / float(__get_closing_price(initial)) * 100
+
+price_difference_pct = get_pct_diff(yesterday, day_before_yesterday)
+print(f"{price_difference_pct} %")
 ## STEP 2: Use https://newsapi.org
 # Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 

@@ -8,7 +8,8 @@ THRESHOLD = 0.5
 config = dotenv_values(".env")
 
 ## STEP 1: Use https://www.alphavantage.co
-# When STOCK price increase/decreases by 5% between yesterday and the day before yesterday then print("Get News").
+# When STOCK price increase/decreases by N% between yesterday and the day before yesterday then print("Get News").
+# N: int
 
 url = "https://alpha-vantage.p.rapidapi.com/query"
 querystring = {"function":"DIGITAL_CURRENCY_DAILY","symbol":CRYPTO_CURRENCY, "market":"USD"}
@@ -42,28 +43,33 @@ def get_pct_diff(initial, final):
 
 price_difference_pct = get_pct_diff(yesterday, day_before_yesterday)
 
-if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
-  news_url = "https://newsapi.org/v2/everything"
-  querystring_news = {
+
+# STEP 2: Use https://newsapi.org
+# Instead of printing ("Get News"), actually get the first 3 news pieces for the CRYPTO_CURRENCy_NAME. 
+
+news_url = "https://newsapi.org/v2/everything"
+querystring_news = {
     "q": CRYPTO_CURRENCY_NAME.lower(),
     "apiKey": config["NEWS_API_KEY"]
 
-  }
+}
+
+ARTICLES_NUMBER = 3
+
+def show_news(q):  
   response = requests.get(url=news_url, params=querystring_news)
   response.raise_for_status()
 
   data = response.json()
   articles = data["articles"]
 
-  articles_number = 3
-  for i in range(articles_number):
-    print(articles[i]["title"])
-    print("\n")
-    print(articles[i]["content"])
+  title_content = [f"{article['title']} \n {article['content']}" for article in articles[:ARTICLES_NUMBER]]
+  print(title_content)
+
+if price_difference_pct < -THRESHOLD or price_difference_pct > THRESHOLD:
+  show_news(querystring_news["q"])
 else:
    print("Negligible difference")
-# STEP 2: Use https://newsapi.org
-# Instead of printing ("Get News"), actually get the first 3 news pieces for the COMPANY_NAME. 
 
 ## STEP 3: Use https://www.twilio.com
 # Send a seperate message with the percentage change and each article's title and description to your phone number. 
